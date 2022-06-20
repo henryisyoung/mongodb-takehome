@@ -1,10 +1,15 @@
 package com.mongo;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-
-import org.json.simple.*;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,9 +24,10 @@ public class App {
                 sb.append(line);
             }
             String json = sb.toString().replaceAll("\\s", "");
-            System.out.println("Before Formatting: " + json);
+            System.out.println("Before format: \n" + prettyJson(json));
 
-            System.out.println("After Formatting:" + reformatJson(json));
+            String compressedJson = reformatJson(json);
+            System.out.println("After format: \n" + prettyJson(compressedJson));
         } catch (IOException e) {
             System.out.println("System IO Exception: " + e.getMessage());
         } catch (NullPointerException e) {
@@ -29,6 +35,13 @@ public class App {
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
         }
+    }
+
+    private static String prettyJson(String json) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonElement je = JsonParser.parseString(json);
+        String prettyJsonString = gson.toJson(je);
+        return prettyJsonString;
     }
 
     public static String reformatJson(String json) {
@@ -47,8 +60,6 @@ public class App {
         }
         // return compressed json string
         String jsonText = JSONValue.toJSONString(map);
-
-//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return jsonText;
     }
 
